@@ -4,6 +4,8 @@
 Each source is isolated. A failed refresh retains its last-good data. Data
 returned by Vouliwatch remains credited and subject to its own usage terms.
 """
+import html
+from html.parser import HTMLParser
 import hashlib
 import json
 import os
@@ -31,7 +33,27 @@ SOURCES = {
  'control': ('Vouliwatch', 'https://api.vouliwatch.gr/v1'),
  'diavgeia': ('Πρόγραμμα Διαύγεια', 'https://diavgeia.gov.gr/api/help'),
 }
-LIMITS = {'laws': 12, 'documents': 3, 'members': 1, 'parties': 2, 'votes': 5, 'control': 4, 'diavgeia': 5}
+LIMITS = {'laws': 30, 'documents': 3, 'members': 1, 'parties': 2, 'votes': 5, 'control': 4, 'diavgeia': 5}
+
+
+class _HTMLText(HTMLParser):
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.parts=[]
+    def handle_data(self, data): self.parts.append(data)
+    def handle_starttag(self, tag, attrs):
+        if tag in ('p','br','li','div'): self.parts.append(' ')
+
+def clean(value, cap=900):
+    if value is None: return ''
+    if isinstance(value,(list,dict)): return ''
+    txt=str(value)
+    parser=_HTMLText()
+    try: parser.feed(txt); txt=' '.join(parser.parts)
+    except Exception: txt=re.sub(r'<[^>]+>',' ',txt)
+    txt=html.unescape(txt).replace('\u200b',' ')
+    txt=re.sub(r'\s+',' ',txt).strip()
+    return txt[:cap].rstrip()
 
 
 def fetch(url, params=None):
@@ -47,20 +69,29 @@ def fetch(url, params=None):
 
 
 def arr(body):
-    if isinstance(body, str):
-        try: return arr(json.loads(body))
-        except ValueError: return []
-    if isinstance(body, list): return body
-    if isinstance(body, dict):
-        for key in ('data', 'results', 'items', 'rows', 'laws', 'documents', 'members', 'political_parties', 'parties', 'votings', 'votes', 'd', 'response', 'records', 'decisions'):
-            for k, v in body.items():
-                if k.lower() == key.lower():
-                    result = arr(v)
-                    if result: return result
-        for val in body.values():
-            if isinstance(val, list) and val and isinstance(val[0], dict): return val
+    """Find actual lists in nested envelopes, including ASP.NET JSON wrappers."""
+    if isinstance(body,str):
+        try:return arr(json.loads(body))
+        except ValueError:return []
+    if isinstance(body,list):
+        if not body:return []
+        if all(isinstance(x,dict) for x in body):return body
+        for x in body:
+            r=arr(x)
+            if r:return r
+        return []
+    if isinstance(body,dict):
+        priorities=('data','results','items','rows','laws','documents','members','political_parties','parties','votings','votes','d','response','records','decisions','list','result','value')
+        for key in priorities:
+            for k,v in body.items():
+                if str(k).lower()==key:
+                    result=arr(v)
+                    if result:return result
+        for v in body.values():
+            if isinstance(v,(list,dict)):
+                result=arr(v)
+                if result:return result
     return []
-
 
 def pick(obj, *keys):
     if not isinstance(obj, dict): return ''
@@ -70,7 +101,7 @@ def pick(obj, *keys):
         if isinstance(v, dict):
             for sub in ('name', 'title', 'label', 'value', 'full_name'):
                 if v.get(sub): v = v[sub]; break
-        if isinstance(v, (str, int, float)) and str(v).strip(): return str(v).strip()
+        if isinstance(v, (str, int, float)) and str(v).strip(): return clean(v)
     return ''
 
 
@@ -103,11 +134,11 @@ def ident(row, *keys):
 
 
 def law(row):
-    title = pick(row, 'title', 'lawtitle', 'law_title', 'title_el', 'lawname', 'description', 'name', 'shorttitle')
+    title = pick(row, 'title', 'lawtitle', 'law_title', 'title_el', 'lawname', 'description', 'name', 'shorttitle', 'subject', 'law', 'caption', 'lawdescription')
     if not title: return None
     voted = date(pick(row, 'datevoted', 'date_voted', 'voteddate', 'dateVoted'))
     inserted = date(pick(row, 'dateinserted', 'date_inserted', 'dateInserted'))
-    number = pick(row, 'lawnum', 'law_num', 'lawnr', 'lawNumber', 'number')
+    number = pick(row, 'lawnum', 'law_num', 'lawnr', 'lawNumber', 'number', 'law_no')
     year = pick(row, 'year', 'lawyear') or (voted or inserted)[:4]
     return dict(id=ident(row,'id','lawid','law_id','guid','_id'), title=title, lawnum=number, year=year,
         datevoted=voted,dateinserted=inserted,ministry=pick(row,'ministryname','ministry','ministryTitle'),
@@ -133,12 +164,12 @@ def generic(row, kind):
     base = 'https://api.vouliwatch.gr' if kind not in ('documents',) else 'https://diafaneia.hellenicparliament.gr'
     return {
      'id': ident(row,'id','_id','uuid','slug','path','_path','ada'),
-     'title': title,
-     'subtitle': pick(row,'party','political_party','parliament_group','district','electoral_district','description','type','ministry'),
+     'title': clean(title, 280),
+     'subtitle': clean(pick(row,'party','political_party','parliament_group','district','electoral_district','description','type','ministry'), 220),
      'date': date(pick(row,'date','created_at','updated_at','voting_date','datevoted','date_published','dateposted','publish_date')),
      'url': href(pick(row,'url','link','permalink','weburl','document_url'),base),
      'source': SOURCES[kind][0],
-     'detail': pick(row,'result','status','type','category','position'),
+     'detail': clean(pick(row,'result','status','type','category','position'), 100),
     }
 
 
@@ -150,7 +181,7 @@ def normalize_diavgeia(row):
     if not ada or not title: return None
     # Never construct paths from arbitrary input; ADA is from the upstream response.
     return {
-      'id': ada, 'ada': ada, 'title': title,
+      'id': ada, 'ada': ada, 'title': clean(title, 280),
       'subtitle': pick(row,'organizationLabel','organizationName','organizationId'),
       'date': date(row.get('issueDate') or row.get('submissionTimestamp')),
       'url': 'https://diavgeia.gov.gr/decision/view/' + ada,
@@ -203,8 +234,8 @@ def collect_pages(base, query, kind, max_pages, page_size):
         if not batch: break
         records.extend(batch)
         print(f'{kind}: page {page}, {len(batch)} records')
-        if len(batch) < page_size: break
-        time.sleep(.45)
+        if page>1 and len(records)>=2*len(batch) and batch == records[-2*len(batch):-len(batch)]: break
+        time.sleep(.35)
     return records
 
 
