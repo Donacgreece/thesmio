@@ -42,7 +42,7 @@ function Find-Project {
 }
 function Assert-LastExit([string]$message) { if ($LASTEXITCODE -ne 0) { throw $message } }
 try {
-  Write-Host 'THESMIO v0.2.0 | GitHub publisher' -ForegroundColor Cyan
+  Write-Host 'THESMIO v0.3.0 | GitHub publisher' -ForegroundColor Cyan
   foreach ($tool in @('git','node','npm')) { if (-not (Get-Command $tool -ErrorAction SilentlyContinue)) { throw "$tool not found. Install Git for Windows and Node.js LTS." } }
   $source = Find-Project
   Push-Location $source
@@ -66,13 +66,25 @@ try {
     $exclusions = @('.git','node_modules','dist','.env','.env.local')
     Get-ChildItem -LiteralPath $source -Force | Where-Object { $exclusions -notcontains $_.Name } | ForEach-Object {
       $destination = Join-Path $target $_.Name
+      if ($_.Name -eq 'public') {
+        $existingData = Join-Path $target 'public\data\catalog.json'
+        if ((Test-Path -LiteralPath $existingData) -and (Test-Path -LiteralPath (Join-Path $source 'public\data\catalog.json'))) {
+          $backupData = Join-Path $env:TEMP 'thesmio-existing-catalog.json'
+          Copy-Item -LiteralPath $existingData -Destination $backupData -Force
+        }
+      }
       if (Test-Path -LiteralPath $destination) { Remove-Item -LiteralPath $destination -Recurse -Force }
       Copy-Item -LiteralPath $_.FullName -Destination $destination -Recurse -Force
+    }
+    if ($backupData -and (Test-Path -LiteralPath $backupData)) {
+      $newData = Join-Path $target 'public\data\catalog.json'
+      Copy-Item -LiteralPath $backupData -Destination $newData -Force
+      Remove-Item -LiteralPath $backupData -Force
     }
     & git add --all
     Assert-LastExit 'Git staging failed.'
     if (@(& git status --porcelain).Count -gt 0) {
-      & git -c user.name='THESMIO Publisher' -c user.email='thesmio-publisher@users.noreply.github.com' commit -m 'Publish THESMIO v0.2.0'
+      & git -c user.name='THESMIO Publisher' -c user.email='thesmio-publisher@users.noreply.github.com' commit -m 'Publish THESMIO v0.3.0'
       Assert-LastExit 'Git commit failed.'
     }
     & git push -u origin main

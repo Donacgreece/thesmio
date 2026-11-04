@@ -10,7 +10,7 @@ import os
 import re
 import sys
 import time
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from urllib.parse import urlencode, urlparse
 from urllib.request import Request, urlopen
@@ -20,6 +20,7 @@ OUT = ROOT / 'public/data/catalog.json'
 PARLIAMENT = 'https://www.hellenicparliament.gr/api.ashx'
 TRANSPARENCY = 'https://diafaneia.hellenicparliament.gr/api.ashx'
 VW = 'https://api.vouliwatch.gr/v1'
+DIAVGEIA = 'https://diavgeia.gov.gr/opendata'
 STAMP = datetime.now(timezone.utc).isoformat()
 SOURCES = {
  'laws': ('Βουλή των Ελλήνων', 'https://www.hellenicparliament.gr/opendata/'),
@@ -28,8 +29,9 @@ SOURCES = {
  'parties': ('Vouliwatch', 'https://api.vouliwatch.gr/v1'),
  'votes': ('Vouliwatch', 'https://api.vouliwatch.gr/v1'),
  'control': ('Vouliwatch', 'https://api.vouliwatch.gr/v1'),
+ 'diavgeia': ('Πρόγραμμα Διαύγεια', 'https://diavgeia.gov.gr/api/help'),
 }
-LIMITS = {'laws': 12, 'documents': 3, 'members': 1, 'parties': 2, 'votes': 5, 'control': 4}
+LIMITS = {'laws': 12, 'documents': 3, 'members': 1, 'parties': 2, 'votes': 5, 'control': 4, 'diavgeia': 5}
 
 
 def fetch(url, params=None):
@@ -50,7 +52,7 @@ def arr(body):
         except ValueError: return []
     if isinstance(body, list): return body
     if isinstance(body, dict):
-        for key in ('data', 'results', 'items', 'rows', 'laws', 'documents', 'members', 'political_parties', 'parties', 'votings', 'votes', 'd', 'response', 'records'):
+        for key in ('data', 'results', 'items', 'rows', 'laws', 'documents', 'members', 'political_parties', 'parties', 'votings', 'votes', 'd', 'response', 'records', 'decisions'):
             for k, v in body.items():
                 if k.lower() == key.lower():
                     result = arr(v)
@@ -74,6 +76,10 @@ def pick(obj, *keys):
 
 def date(value):
     if not value: return ''
+    if isinstance(value, (int, float)):
+        try: return datetime.fromtimestamp(value / (1000 if value > 10_000_000_000 else 1), timezone.utc).date().isoformat()
+        except (ValueError, OSError, OverflowError): return ''
+    value = str(value)
     if re.match(r'^\d{4}-\d\d-\d\d', value): return value[:10]
     m = re.match(r'^(\d\d?)/(\d\d?)/(\d{4})', value)
     if m: return f'{int(m[3]):04d}-{int(m[2]):02d}-{int(m[1]):02d}'
@@ -136,6 +142,53 @@ def generic(row, kind):
     }
 
 
+def normalize_diavgeia(row):
+    """Normalize only public search metadata; official ADA remains canonical ID."""
+    if not isinstance(row, dict): return None
+    ada = pick(row, 'ada')
+    title = pick(row, 'subject')
+    if not ada or not title: return None
+    # Never construct paths from arbitrary input; ADA is from the upstream response.
+    return {
+      'id': ada, 'ada': ada, 'title': title,
+      'subtitle': pick(row,'organizationLabel','organizationName','organizationId'),
+      'date': date(row.get('issueDate') or row.get('submissionTimestamp')),
+      'url': 'https://diavgeia.gov.gr/decision/view/' + ada,
+      'source': 'Πρόγραμμα Διαύγεια',
+      'detail': pick(row, 'decisionTypeLabel','decisionTypeId','status'),
+    }
+
+
+def collect_diavgeia():
+    """Incremental, bounded snapshot. Respect upstream search downtime and rate limits.
+
+    Search is currently reported limited to ADA during maintenance: errors are
+    expected and preserved as source status, not interpreted as no new decisions.
+    """
+    today = datetime.now(timezone.utc).date()
+    # Up to 72-hour overlap picks up delayed submissions without scraping.
+    start = today - timedelta(days=3)
+    output = {}
+    for page in range(LIMITS['diavgeia']):
+        body = fetch(DIAVGEIA + '/search', {
+           'from_date':start.isoformat(),'to_date':today.isoformat(),
+           'status':'published','sort':'recent','page':page,'size':100
+        })
+        if isinstance(body,dict) and body.get('error'):
+            raise RuntimeError(f'Diavgeia search unavailable: {str(body["error"])[:140]}')
+        rows=arr(body)
+        if page==0 and not rows:
+            raise RuntimeError(f'Diavgeia search empty or restricted; root={list(body)[:12] if isinstance(body,dict) else type(body).__name__}')
+        for item in rows:
+            normalized=normalize_diavgeia(item)
+            if normalized: output[normalized['id']]=normalized
+        print(f'diavgeia: page={page}, results={len(rows)}, valid={len(output)}')
+        if len(rows)<100: break
+        time.sleep(.8)
+    if not output: raise RuntimeError('No valid ADA records from Diavgeia')
+    return list(output.values())
+
+
 def collect_pages(base, query, kind, max_pages, page_size):
     records = []
     for page in range(1,max_pages+1):
@@ -156,6 +209,8 @@ def collect_pages(base, query, kind, max_pages, page_size):
 
 
 def run_source(kind):
+    if kind == 'diavgeia':
+        return collect_diavgeia()
     if kind == 'laws':
         raw = collect_pages(PARLIAMENT, {'q':'laws'}, kind, LIMITS[kind], 50)
         cleaned = [law(x) for x in raw]
@@ -188,19 +243,20 @@ def main():
       'laws':old.get('laws',[]), 'ministries':old.get('ministries',[]), 'categories':old.get('categories',[]),
       'members':old.get('members',[]),'parties':old.get('parties',[]),'votes':old.get('votes',[]),
       'control':old.get('control',[]),'documents':old.get('documents',[]),
+      'diavgeia':old.get('diavgeia',[]),
       'sources':dict(old.get('sources') or {}),
     }
     failures=[]; successes=0
-    for kind in ('laws','members','parties','votes','control','documents'):
+    for kind in ('laws','members','parties','votes','control','documents','diavgeia'):
         src,link=SOURCES[kind]
         previous=catalog.get(kind,[])
         try:
             fresh=run_source(kind)
             # Do not silently shrink a populated dataset to a few records due to upstream changes.
-            if previous and len(fresh) < max(3,len(previous)//5):
+            if kind != 'diavgeia' and previous and len(fresh) < max(3,len(previous)//5):
                 raise RuntimeError(f'Unexpected dataset shrink: {len(previous)} -> {len(fresh)}')
-            catalog[kind]=fresh
-            catalog['sources'][kind]={'name':src,'url':link,'status':'ok','updatedAt':STAMP,'count':len(fresh)}
+            catalog[kind]=(sorted({r['id']:r for r in (previous + fresh)}.values(), key=lambda r:r.get('date',''), reverse=True)[:2500] if kind == 'diavgeia' else fresh)
+            catalog['sources'][kind]={'name':src,'url':link,'status':'ok','updatedAt':STAMP,'count':len(catalog[kind])}
             successes+=1
         except Exception as e:
             failures.append(kind)
@@ -219,7 +275,7 @@ def main():
     catalog['error']=f'Αποτυχία ενημέρωσης: {", ".join(failures)}' if failures else None
     OUT.parent.mkdir(parents=True,exist_ok=True)
     OUT.write_text(json.dumps(catalog,ensure_ascii=False,indent=2),encoding='utf-8')
-    print(f'THESMIO: {successes}/6 sources synced; laws={len(catalog["laws"])} members={len(catalog["members"])} parties={len(catalog["parties"])} votes={len(catalog["votes"])} control={len(catalog["control"])} documents={len(catalog["documents"])}')
+    print(f'THESMIO: {successes}/7 sources synced; laws={len(catalog["laws"])} members={len(catalog["members"])} parties={len(catalog["parties"])} votes={len(catalog["votes"])} control={len(catalog["control"])} documents={len(catalog["documents"])} diavgeia={len(catalog["diavgeia"])}')
     # Explicit failed sources in GitHub Actions, but never destroy a good snapshot.
     return 0 if successes else 1
 

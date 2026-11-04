@@ -57,3 +57,12 @@ Runs four sync checks daily through GitHub Actions (UTC 03:15, 09:15, 15:15, 21:
 ### First run
 
 After pushing, open GitHub > Actions > THESMIO Open Data sync and deploy > Run workflow. Inspect logs for each source. Successful snapshots are committed back to `public/data/catalog.json` with `[skip ci]`. GitHub may disable write permissions via repository settings: choose Settings > Actions > General > Workflow permissions > Read and write permissions if necessary. If the upstream service denies requests, its feed remains empty with an error indicator until an alternative authorized source is connected.
+
+
+## v0.3.0: Επίσημη Διαύγεια
+
+Προστέθηκε ξεχωριστή καρτέλα «Διαύγεια» και συλλέκτης `https://diavgeia.gov.gr/opendata/search` με μικρό επικαλυπτόμενο παράθυρο αλλαγών (72 ώρες), σελιδοποίηση, κανονικοποίηση `ADA`, απευθείας σύνδεση σε επίσημη πράξη, διατήρηση τελευταίου επιτυχημένου snapshot και ορατή κατάσταση πηγής. Όριο διατήρησης: 2.500 πρόσφατες εγγραφές. Δεν αποτελεί πλήρες ιστορικό της Διαύγειας.
+
+**Προσοχή στην προσωρινή συντήρηση:** Η Διαύγεια ανακοινώνει περιορισμό της δημόσιας αναζήτησης σε αναζήτηση με ΑΔΑ. Επομένως, ο συλλέκτης μπορεί να μην επιστρέφει αποτελέσματα μέχρι να επανέλθει η γενική αναζήτηση. Δεν παρακάμπτουμε περιορισμούς και δεν εμφανίζουμε εικονικές αποφάσεις. Δείτε https://diavgeia.gov.gr/api/help και https://diavgeia.gov.gr/search.
+
+Η Διαύγεια διαφέρει από τη «Διαφάνεια της Βουλής». Διατηρούνται ως ξεχωριστές πηγές.
