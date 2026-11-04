@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-04T13:40:51.808225+00:00",
+  "updatedAt": "2026-11-04T13:59:28.592575+00:00",
   "source": "https://www.hellenicparliament.gr/opendata/",
   "status": "partial",
   "error": "Αποτυχία ενημέρωσης: laws, documents",
@@ -9866,34 +9866,34 @@
       "status": "error",
       "updatedAt": null,
       "count": 0,
-      "error": "https://www.hellenicparliament.gr/api.ashx?q=laws&pageNo=1&pageSize=50: HTTPError: HTTP Error 403: Forbidden"
+      "error": "Parliament JSON failed: https://www.hellenicparliament.gr/api.ashx?q=laws&pageNo=1&pageSize=50: HTTPError: HTTP Error 403: Forbidden; XML fallback failed: HTTP Error 403: Forbidden"
     },
     "members": {
       "name": "Vouliwatch",
       "url": "https://api.vouliwatch.gr/v1",
       "status": "ok",
-      "updatedAt": "2026-11-04T13:40:51.808225+00:00",
+      "updatedAt": "2026-11-04T13:59:28.592575+00:00",
       "count": 318
     },
     "parties": {
       "name": "Vouliwatch",
       "url": "https://api.vouliwatch.gr/v1",
       "status": "ok",
-      "updatedAt": "2026-11-04T13:40:51.808225+00:00",
+      "updatedAt": "2026-11-04T13:59:28.592575+00:00",
       "count": 40
     },
     "votes": {
       "name": "Vouliwatch",
       "url": "https://api.vouliwatch.gr/v1",
       "status": "ok",
-      "updatedAt": "2026-11-04T13:40:51.808225+00:00",
+      "updatedAt": "2026-11-04T13:59:28.592575+00:00",
       "count": 100
     },
     "control": {
       "name": "Vouliwatch",
       "url": "https://api.vouliwatch.gr/v1",
       "status": "ok",
-      "updatedAt": "2026-11-04T13:40:51.808225+00:00",
+      "updatedAt": "2026-11-04T13:59:28.592575+00:00",
       "count": 80
     },
     "documents": {
@@ -9908,7 +9908,7 @@
       "name": "Πρόγραμμα Διαύγεια",
       "url": "https://diavgeia.gov.gr/api/help",
       "status": "ok",
-      "updatedAt": "2026-11-04T13:40:51.808225+00:00",
+      "updatedAt": "2026-11-04T13:59:28.592575+00:00",
       "count": 500
     }
   }
