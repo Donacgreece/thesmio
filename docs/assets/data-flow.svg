@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 258" role="img" aria-labelledby="title desc">
+<title id="title">Διαδρομή δημόσιων δεδομένων στο ΘΕΣΜΙΟ</title><desc id="desc">Τα δημόσια API και αποθετήρια περνούν στον συλλέκτη Python, αποθηκεύονται σε JSON, δημοσιεύονται στο GitHub Pages και αναζητούνται στον browser.</desc>
+<rect width="1100" height="258" rx="22" fill="#0b263b"/>
+<g font-family="Arial, sans-serif" text-anchor="middle">
+<rect x="24" y="74" width="185" height="108" rx="12" fill="#16374c" stroke="#537387"/>
+<text x="116" y="105" fill="#edc271" font-size="18" font-weight="bold">Δημόσιες πηγές</text><text x="116" y="133" fill="#e2edf2" font-size="15">Βουλή · Vouliwatch</text><text x="116" y="154" fill="#e2edf2" font-size="15">Διαύγεια · ΦΕΚ</text>
+<path d="M216 128h40" fill="none" stroke="#edc271" stroke-width="3"/><path d="m248 120 10 8-10 8" fill="none" stroke="#edc271" stroke-width="3"/>
+<rect x="266" y="74" width="180" height="108" rx="12" fill="#16374c" stroke="#537387"/>
+<text x="356" y="107" fill="#edc271" font-size="18" font-weight="bold">Python</text><text x="356" y="138" fill="#e2edf2" font-size="15">Έλεγχος, συλλογή</text><text x="356" y="159" fill="#e2edf2" font-size="15">κανονικοποίηση</text>
+<path d="M453 128h39" fill="none" stroke="#edc271" stroke-width="3"/><path d="m484 120 10 8-10 8" fill="none" stroke="#edc271" stroke-width="3"/>
+<rect x="502" y="74" width="166" height="108" rx="12" fill="#16374c" stroke="#537387"/>
+<text x="585" y="106" fill="#edc271" font-size="18" font-weight="bold">Snapshot</text><text x="585" y="137" fill="#e2edf2" font-size="15">catalog.json</text><text x="585" y="158" fill="#e2edf2" font-size="15">με προέλευση</text>
+<path d="M675 128h39" fill="none" stroke="#edc271" stroke-width="3"/><path d="m706 120 10 8-10 8" fill="none" stroke="#edc271" stroke-width="3"/>
+<rect x="724" y="74" width="156" height="108" rx="12" fill="#16374c" stroke="#537387"/>
+<text x="802" y="106" fill="#edc271" font-size="18" font-weight="bold">GitHub Pages</text><text x="802" y="138" fill="#e2edf2" font-size="15">Στατική</text><text x="802" y="159" fill="#e2edf2" font-size="15">δημοσίευση</text>
+<path d="M887 128h28" fill="none" stroke="#edc271" stroke-width="3"/><path d="m907 120 10 8-10 8" fill="none" stroke="#edc271" stroke-width="3"/>
+<rect x="927" y="74" width="151" height="108" rx="12" fill="#16374c" stroke="#537387"/>
+<text x="1002" y="106" fill="#edc271" font-size="18" font-weight="bold">Browser</text><text x="1002" y="138" fill="#e2edf2" font-size="15">Άμεση τοπική</text><text x="1002" y="159" fill="#e2edf2" font-size="15">αναζήτηση</text>
+<text x="550" y="42" fill="#ffffff" font-size="23" font-weight="bold">Η ροή δεδομένων του ΘΕΣΜΙΟ</text><text x="550" y="225" fill="#bacdd8" font-size="15">Προγραμματισμένη ανανέωση · Διατήρηση τελευταίου έγκυρου στιγμιότυπου · Χωρίς AI API</text>
+</g></svg>

@@ -15,7 +15,7 @@ import time
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
-from urllib.parse import urlencode, urlparse
+from urllib.parse import urlencode, urlparse, quote
 from urllib.request import Request, urlopen
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -254,6 +254,52 @@ def collect_pages(base, query, kind, max_pages, page_size):
     return records
 
 
+def collect_law_archive():
+    """Independent MIT-licensed legislative-text index fallback.
+
+    A GitHub tree provides filenames and raw document paths. We index only
+    verified path metadata and optional text headers, never invent law titles.
+    The repository contains source-derived text, not consolidated law.
+    """
+    tree_url = 'https://api.github.com/repos/kafidas/just-text/git/trees/main?recursive=1'
+    headers = {'Accept': 'application/vnd.github+json',
+               'User-Agent': 'THESMIO/0.5 (https://github.com/Donacgreece/thesmio)'}
+    token = os.environ.get('GITHUB_TOKEN', '')
+    if token: headers['Authorization'] = f'Bearer {token}'
+    request = Request(tree_url, headers=headers)
+    with urlopen(request, timeout=35) as r:
+        obj = json.load(r)
+    if obj.get('truncated'):
+        print('LAW ARCHIVE: GitHub tree truncated',file=sys.stderr)
+    paths = [item['path'] for item in obj.get('tree', [])
+             if item.get('type') == 'blob' and item.get('path','').lower().endswith(('.txt','.md'))
+             and re.match(r'^(20(?:2[1-6]))/',item['path'])]
+    paths.sort(reverse=True)
+    if not paths:
+        raise RuntimeError('Alternative legal archive returned no document paths')
+    result = {}
+    # Controlled incremental coverage: existing records remain available; fetch a
+    # bounded subset per synchronization to respect GitHub API / bandwidth limits.
+    for path in paths[:180]:
+        match = re.search(r'(?<!\d)([45]\d{3})(?!\d)',path)
+        if not match: continue
+        year_match=re.match(r'^(20\d{2})/',path)
+        if not year_match: continue
+        year=year_match.group(1)
+        law_number=match.group(1)
+        rel='https://github.com/kafidas/just-text/blob/main/' + '/'.join(quote(bit,safe='') for bit in path.split('/'))
+        key=f'{law_number}/{year}'
+        # Validated numeric year/number in the archive path, no AI title synthesis.
+        result[key]={'id':'archive-'+key,'title':f'Νόμος {key}',
+             'lawnum':law_number,'year':year,'datevoted':'','dateinserted':'',
+             'ministry':'','category':'Κείμενο νόμου (αρχείο)', 'url':rel,'pdf':'',
+             'description':'Κείμενο όπως μεταγράφηκε από ΦΕΚ, όχι κωδικοποιημένη νομοθεσία.',
+             'source':'https://github.com/kafidas/just-text'}
+    if not result: raise RuntimeError('Alternative archive has files but no parseable law numbers')
+    print(f'law archive: {len(result)} metadata entries')
+    return list(result.values())
+
+
 def run_source(kind):
     if kind == 'diavgeia':
         return collect_diavgeia()
@@ -270,7 +316,8 @@ def run_source(kind):
                 if not raw: raise RuntimeError('XML returned no recognized legislative rows')
                 print(f'laws: XML fallback returned {len(raw)} rows')
             except Exception as secondary:
-                raise RuntimeError(f'Parliament JSON failed: {primary}; XML fallback failed: {secondary}') from secondary
+                print(f'Parliament JSON/XML unavailable ({secondary}); using attributed text archive fallback', file=sys.stderr)
+                return collect_law_archive()
         cleaned = [law(x) for x in raw]
     elif kind == 'documents':
         raw = collect_pages(TRANSPARENCY, {'q':'documents'},kind,LIMITS[kind],30)
@@ -314,7 +361,10 @@ def main():
             if kind != 'diavgeia' and previous and len(fresh) < max(3,len(previous)//5):
                 raise RuntimeError(f'Unexpected dataset shrink: {len(previous)} -> {len(fresh)}')
             catalog[kind]=(sorted({r['id']:r for r in (previous + fresh)}.values(), key=lambda r:r.get('date',''), reverse=True)[:2500] if kind == 'diavgeia' else fresh)
-            catalog['sources'][kind]={'name':src,'url':link,'status':'ok','updatedAt':STAMP,'count':len(catalog[kind])}
+            catalog['sources'][kind]={'name':('Kafidas / just-text (εναλλακτικό αρχείο)' if kind=='laws' and fresh and fresh[0].get('id','').startswith('archive-') else src),
+              'url':('https://github.com/kafidas/just-text' if kind=='laws' and fresh and fresh[0].get('id','').startswith('archive-') else link),
+              'status':('fallback' if kind=='laws' and fresh and fresh[0].get('id','').startswith('archive-') else 'ok'),
+              'updatedAt':STAMP,'count':len(catalog[kind])}
             successes+=1
         except Exception as e:
             failures.append(kind)

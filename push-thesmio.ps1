@@ -42,7 +42,7 @@ function Find-Project {
 }
 function Assert-LastExit([string]$message) { if ($LASTEXITCODE -ne 0) { throw $message } }
 try {
-  Write-Host 'THESMIO v0.4.1 | GitHub publisher' -ForegroundColor Cyan
+  Write-Host 'THESMIO v0.5.0 | GitHub publisher' -ForegroundColor Cyan
   foreach ($tool in @('git','node','npm')) { if (-not (Get-Command $tool -ErrorAction SilentlyContinue)) { throw "$tool not found. Install Git for Windows and Node.js LTS." } }
   $source = Find-Project
   Push-Location $source
@@ -84,7 +84,7 @@ try {
     & git add --all
     Assert-LastExit 'Git staging failed.'
     if (@(& git status --porcelain).Count -gt 0) {
-      & git -c user.name='THESMIO Publisher' -c user.email='thesmio-publisher@users.noreply.github.com' commit -m 'Publish THESMIO v0.4.1'
+      & git -c user.name='THESMIO Publisher' -c user.email='thesmio-publisher@users.noreply.github.com' commit -m 'Publish THESMIO v0.5.0'
       Assert-LastExit 'Git commit failed.'
     }
     & git push -u origin main
