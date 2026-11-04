@@ -48,3 +48,12 @@ After purchasing `thesmio.gr`:
 ## Data license and independence
 
 Original code is MIT licensed. Data from public authorities may have separate conditions. Vouliwatch material is **not scraped or copied** in this release; their curated data has additional terms. The site is not affiliated with the Greek Parliament and provides no legal advice.
+
+
+## v0.2.0: Live data sources
+
+Runs four sync checks daily through GitHub Actions (UTC 03:15, 09:15, 15:15, 21:15) and on manual dispatch. Sources: Hellenic Parliament `laws`, `ministries`, `categories`; Parliament Transparency `documents`; Vouliwatch `session/members`, `political_parties`, `votings`, `parliamentary-control/documents`. API permissions and source content rights are distinct. Do not republish protected editorial text. Vouliwatch data is attributed with its current CC BY-NC 4.0 terms, where applicable. No invented entries. Each failed source preserves its last-good snapshot, and status is listed in Πηγές.
+
+### First run
+
+After pushing, open GitHub > Actions > THESMIO Open Data sync and deploy > Run workflow. Inspect logs for each source. Successful snapshots are committed back to `public/data/catalog.json` with `[skip ci]`. GitHub may disable write permissions via repository settings: choose Settings > Actions > General > Workflow permissions > Read and write permissions if necessary. If the upstream service denies requests, its feed remains empty with an error indicator until an alternative authorized source is connected.

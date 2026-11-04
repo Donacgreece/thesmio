@@ -1,51 +1,70 @@
-name: THESMIO • Sync and publish
+name: THESMIO • Open Data sync and deploy
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - 'public/data/catalog.json'
   workflow_dispatch:
   schedule:
-    - cron: '23 5 * * *'
+    # UTC: four times daily (local Greece time shifts with daylight saving).
+    - cron: '15 3,9,15,21 * * *'
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 concurrency:
-  group: pages
-  cancel-in-progress: true
+  group: thesmio-pages
+  cancel-in-progress: false
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Sync official Parliament dataset
-        run: python3 scripts/sync_data.py || echo 'Upstream data unavailable; publishing preserved last-good dataset.'
+        with:
+          persist-credentials: true
+      - name: Collect open datasets
+        id: sync
+        continue-on-error: true
+        run: python3 scripts/sync_data.py
+      - name: Persist latest verified snapshot
+        continue-on-error: true
+        shell: bash
+        run: |
+          if ! git diff --quiet -- public/data/catalog.json; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add public/data/catalog.json
+            git commit -m 'data: refresh public snapshots [skip ci]'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: npm
-      - name: Install dependencies
+      - name: Install packages
         run: npm install --no-audit --no-fund
       - name: Type-check
         run: npm run check
-      - name: Build production site
+      - name: Build GitHub Pages
         env:
           THESMIO_CUSTOM_DOMAIN: 'false'
         run: npm run build
-      - name: Configure GitHub Pages
+      - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
         with:
           path: dist
   deploy:
+    runs-on: ubuntu-latest
+    needs: build
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
     steps:
-      - name: Publish GitHub Pages
+      - name: Publish
         id: deployment
         uses: actions/deploy-pages@v4

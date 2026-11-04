@@ -1,126 +1,226 @@
 #!/usr/bin/env python3
-"""Fetch verified parliamentary law metadata. Retain last-good on failure.
-Only official Parliament open-data source is used in this initial integration.
+"""THESMIO: public-source snapshot synchronizer. Never fabricates records.
+
+Each source is isolated. A failed refresh retains its last-good data. Data
+returned by Vouliwatch remains credited and subject to its own usage terms.
 """
-import json, os, re, sys, time
+import hashlib
+import json
+import os
+import re
+import sys
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import urlencode, urlparse
 from urllib.request import Request, urlopen
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT/'public'/'data'/'catalog.json'
-API = 'https://www.hellenicparliament.gr/api.ashx'
-MAX_PAGES = int(os.environ.get('THESMIO_MAX_PAGES', '40'))
-PAGE_SIZE = 50
+OUT = ROOT / 'public/data/catalog.json'
+PARLIAMENT = 'https://www.hellenicparliament.gr/api.ashx'
+TRANSPARENCY = 'https://diafaneia.hellenicparliament.gr/api.ashx'
+VW = 'https://api.vouliwatch.gr/v1'
+STAMP = datetime.now(timezone.utc).isoformat()
+SOURCES = {
+ 'laws': ('Βουλή των Ελλήνων', 'https://www.hellenicparliament.gr/opendata/'),
+ 'documents': ('Διαφάνεια της Βουλής', 'https://diafaneia.hellenicparliament.gr/OpenData'),
+ 'members': ('Vouliwatch', 'https://api.vouliwatch.gr/v1'),
+ 'parties': ('Vouliwatch', 'https://api.vouliwatch.gr/v1'),
+ 'votes': ('Vouliwatch', 'https://api.vouliwatch.gr/v1'),
+ 'control': ('Vouliwatch', 'https://api.vouliwatch.gr/v1'),
+}
+LIMITS = {'laws': 12, 'documents': 3, 'members': 1, 'parties': 2, 'votes': 5, 'control': 4}
 
-def get(query):
-    url = API + '?' + urlencode(query)
-    req = Request(url, headers={'User-Agent':'ThesmioOpenData/0.1 (+https://github.com/Donacgreece/thesmio)','Accept':'application/json'})
+
+def fetch(url, params=None):
+    if params: url += ('&' if '?' in url else '?') + urlencode(params)
+    req = Request(url, headers={'User-Agent': 'THESMIO-OpenData/0.2 (https://github.com/Donacgreece/thesmio)', 'Accept': 'application/json'})
     for attempt in range(3):
         try:
-            with urlopen(req, timeout=25) as r:
-                raw = r.read(8_000_000)
-                return json.loads(raw.decode('utf-8-sig'))
+            with urlopen(req, timeout=28) as r:
+                return json.loads(r.read(12_000_000).decode('utf-8-sig'))
         except Exception as exc:
-            if attempt == 2: raise RuntimeError(f'{url}: {exc}') from exc
-            time.sleep(2 * (attempt+1))
+            if attempt == 2: raise RuntimeError(f'{url}: {type(exc).__name__}: {exc}') from exc
+            time.sleep(2 * (attempt + 1))
 
-def unwrap(body):
-    """Accommodate common legacy ASP.NET JSON response envelopes."""
+
+def arr(body):
     if isinstance(body, str):
-        try: return unwrap(json.loads(body))
-        except (ValueError, TypeError): return []
-    if isinstance(body, list):return body
+        try: return arr(json.loads(body))
+        except ValueError: return []
+    if isinstance(body, list): return body
     if isinstance(body, dict):
-        for key in ('results','Results','items','Items','data','Data','laws','Laws','List','list','rows','Rows','result','Result','d'):
-            if key in body:
-                v=unwrap(body[key]);
-                if isinstance(v,list):return v
-        for v in body.values():
-            if isinstance(v,list):return v
+        for key in ('data', 'results', 'items', 'rows', 'laws', 'documents', 'members', 'political_parties', 'parties', 'votings', 'votes', 'd', 'response', 'records'):
+            for k, v in body.items():
+                if k.lower() == key.lower():
+                    result = arr(v)
+                    if result: return result
+        for val in body.values():
+            if isinstance(val, list) and val and isinstance(val[0], dict): return val
     return []
 
-def pick(obj,*keys):
-    if not isinstance(obj,dict): return ''
-    lower={str(k).lower():v for k,v in obj.items()}
+
+def pick(obj, *keys):
+    if not isinstance(obj, dict): return ''
+    lowered = {str(k).lower().replace('_', ''): v for k, v in obj.items()}
     for key in keys:
-        v=obj.get(key,lower.get(key.lower()))
-        if isinstance(v, (str,int,float)) and str(v).strip():return str(v).strip()
+        v = lowered.get(key.lower().replace('_', ''))
+        if isinstance(v, dict):
+            for sub in ('name', 'title', 'label', 'value', 'full_name'):
+                if v.get(sub): v = v[sub]; break
+        if isinstance(v, (str, int, float)) and str(v).strip(): return str(v).strip()
     return ''
 
-def normalized_date(v):
-    if not v:return ''
-    if re.match(r'^\d{4}-\d\d-\d\d',v):return v[:10]
-    m=re.match(r'^(\d\d?)/(\d\d?)/(\d{4})',v)
-    if m:return f'{int(m[3]):04d}-{int(m[2]):02d}-{int(m[1]):02d}'
-    m=re.search(r'Date\((\d+)\)',v)
+
+def date(value):
+    if not value: return ''
+    if re.match(r'^\d{4}-\d\d-\d\d', value): return value[:10]
+    m = re.match(r'^(\d\d?)/(\d\d?)/(\d{4})', value)
+    if m: return f'{int(m[3]):04d}-{int(m[2]):02d}-{int(m[1]):02d}'
+    m = re.search(r'Date\((\d+)\)', value)
     if m:
-        try:return datetime.fromtimestamp(int(m[1])/1000,timezone.utc).date().isoformat()
-        except (ValueError,OSError):pass
+        try: return datetime.fromtimestamp(int(m[1]) / 1000, timezone.utc).date().isoformat()
+        except (ValueError, OSError, OverflowError): return ''
     return ''
 
-def safe_url(value):
-    if not value:return ''
-    if value.startswith('/') :value='https://www.hellenicparliament.gr'+value
-    try:
-        p=urlparse(value)
-        return value if p.scheme in ('https','http') and p.hostname else ''
-    except ValueError:return ''
 
-def transform(row):
-    title=pick(row,'title','lawtitle','law_title','title_el','lawname','description','name')
-    if not title:return None
-    num=pick(row,'lawnum','law_num','lawnr','lawNumber','number')
-    voted=normalized_date(pick(row,'datevoted','date_voted','voteddate','dateVoted'))
-    inserted=normalized_date(pick(row,'dateinserted','date_inserted','dateInserted'))
-    year=pick(row,'year','lawyear') or ((voted or inserted)[:4])
-    ident=pick(row,'id','lawid','law_id','guid') or f'{num}-{year}-{title[:35]}'
-    return dict(id=ident,title=title,lawnum=num,year=year,datevoted=voted,dateinserted=inserted,
-        ministry=pick(row,'ministryname','ministry_name','ministry','ministryTitle'),
+def href(value, base='https://www.hellenicparliament.gr'):
+    if not isinstance(value, str) or not value: return ''
+    if value.startswith('/'): value = base + value
+    p = urlparse(value)
+    return value if p.scheme in ('http', 'https') and p.hostname else ''
+
+
+def ident(row, *keys):
+    found = pick(row, *keys)
+    return found if found else hashlib.sha1(json.dumps(row, ensure_ascii=False, sort_keys=True).encode()).hexdigest()[:20]
+
+
+def law(row):
+    title = pick(row, 'title', 'lawtitle', 'law_title', 'title_el', 'lawname', 'description', 'name', 'shorttitle')
+    if not title: return None
+    voted = date(pick(row, 'datevoted', 'date_voted', 'voteddate', 'dateVoted'))
+    inserted = date(pick(row, 'dateinserted', 'date_inserted', 'dateInserted'))
+    number = pick(row, 'lawnum', 'law_num', 'lawnr', 'lawNumber', 'number')
+    year = pick(row, 'year', 'lawyear') or (voted or inserted)[:4]
+    return dict(id=ident(row,'id','lawid','law_id','guid','_id'), title=title, lawnum=number, year=year,
+        datevoted=voted,dateinserted=inserted,ministry=pick(row,'ministryname','ministry','ministryTitle'),
         category=pick(row,'categoryname','category','type','lawtype'),
-        url=safe_url(pick(row,'url','link','lawurl','weburl')),
-        pdf=safe_url(pick(row,'pdf','pdfurl','fileurl','file','documenturl')),
-        description='',source='https://www.hellenicparliament.gr/opendata/')
+        url=href(pick(row,'url','link','lawurl','weburl','permalink')),
+        pdf=href(pick(row,'pdf','pdfurl','fileurl','documenturl')),
+        description='',source=SOURCES['laws'][1])
+
+
+def generic(row, kind):
+    if not isinstance(row, dict): return None
+    labelsets = {
+     'members': ('fullname','full_name','display_name','name','title'),
+     'parties': ('name','title','short_name','abbreviation'),
+     'votes': ('title','subject','name','description','label'),
+     'control': ('title','subject','name','question','description'),
+     'documents': ('title','subject','description','name','protocolnumber'),
+    }
+    title = pick(row, *labelsets[kind])
+    if kind == 'members' and not title:
+        title = ' '.join(filter(None,(pick(row,'first_name','firstname','firstName'),pick(row,'last_name','lastname','lastName'))))
+    if not title: return None
+    base = 'https://api.vouliwatch.gr' if kind not in ('documents',) else 'https://diafaneia.hellenicparliament.gr'
+    return {
+     'id': ident(row,'id','_id','uuid','slug','path','_path','ada'),
+     'title': title,
+     'subtitle': pick(row,'party','political_party','parliament_group','district','electoral_district','description','type','ministry'),
+     'date': date(pick(row,'date','created_at','updated_at','voting_date','datevoted','date_published','dateposted','publish_date')),
+     'url': href(pick(row,'url','link','permalink','weburl','document_url'),base),
+     'source': SOURCES[kind][0],
+     'detail': pick(row,'result','status','type','category','position'),
+    }
+
+
+def collect_pages(base, query, kind, max_pages, page_size):
+    records = []
+    for page in range(1,max_pages+1):
+        args = dict(query)
+        if kind in ('laws','documents'): args.update(pageNo=page,pageSize=page_size)
+        else: args.update(page=page,per_page=page_size)
+        body = fetch(base,args)
+        batch = arr(body)
+        if page == 1 and not batch:
+            # Fail closed: upstream schema may have changed; do not silently wipe data.
+            raise RuntimeError(f'Unexpected empty or unmapped response from {kind}. Root keys: {list(body)[:20] if isinstance(body,dict) else type(body).__name__}')
+        if not batch: break
+        records.extend(batch)
+        print(f'{kind}: page {page}, {len(batch)} records')
+        if len(batch) < page_size: break
+        time.sleep(.45)
+    return records
+
+
+def run_source(kind):
+    if kind == 'laws':
+        raw = collect_pages(PARLIAMENT, {'q':'laws'}, kind, LIMITS[kind], 50)
+        cleaned = [law(x) for x in raw]
+    elif kind == 'documents':
+        raw = collect_pages(TRANSPARENCY, {'q':'documents'},kind,LIMITS[kind],30)
+        cleaned = [generic(x,kind) for x in raw]
+    else:
+        endpoints = {'members':'/parliament/gr/session/members','parties':'/political_parties','votes':'/votings','control':'/parliamentary-control/documents'}
+        if kind == 'members':
+            body = fetch(VW+endpoints[kind]); raw=arr(body)
+            if not raw: raise RuntimeError('Member list returned empty/unrecognized response')
+        else: raw = collect_pages(VW+endpoints[kind],{},kind,LIMITS[kind],20)
+        cleaned = [generic(x,kind) for x in raw]
+    out = {}
+    for x in cleaned:
+        if x: out[x['id']]=x
+    if not out: raise RuntimeError(f'No valid {kind} records after normalization')
+    vals = list(out.values())
+    if kind == 'laws': vals.sort(key=lambda r: (r['datevoted'],r['year'],r['lawnum']),reverse=True)
+    elif kind in ('votes','control','documents'): vals.sort(key=lambda r:r['date'],reverse=True)
+    return vals
+
 
 def main():
-    old={}
-    if OUT.exists():
-        try:old=json.loads(OUT.read_text(encoding='utf-8'))
-        except (ValueError,OSError):pass
-    try:
-        rows=[]
-        for page in range(1, MAX_PAGES+1):
-            body=get({'q':'laws','pageNo':page,'pageSize':PAGE_SIZE})
-            batch=unwrap(body)
-            if not batch:
-                if page==1:raise RuntimeError('Unexpected or empty response on first page. Inspect upstream JSON schema.')
-                break
-            rows.extend(batch)
-            print(f'Page {page}: {len(batch)} records')
-            if len(batch)<PAGE_SIZE:break
-            time.sleep(.35)
-        laws={}
-        for row in rows:
-            value=transform(row)
-            if value:laws[value['id']]=value
-        if not laws:raise RuntimeError('No valid laws parsed: inspect API payload fields')
-        items=sorted(laws.values(),key=lambda x:(x['datevoted'],x['year'],x['lawnum']),reverse=True)
-        result={'updatedAt':datetime.now(timezone.utc).isoformat(),'source':'https://www.hellenicparliament.gr/opendata/','status':'ok','laws':items,'ministries':[],'categories':[],'error':None}
-        OUT.parent.mkdir(parents=True,exist_ok=True)
-        OUT.write_text(json.dumps(result,ensure_ascii=False,indent=2),encoding='utf-8')
-        print(f'Success: {len(items)} verified law records')
-    except Exception as e:
-        print('Source sync failed:',str(e),file=sys.stderr)
-        # Keep previous valid dataset. No fabricated fallback results.
-        if old.get('laws'):
-            old['status']='stale';old['error']='Latest source refresh failed; showing last successful snapshot.'
-            OUT.write_text(json.dumps(old,ensure_ascii=False,indent=2),encoding='utf-8')
-        else:
-            old.update({'updatedAt':None,'source':'https://www.hellenicparliament.gr/opendata/','status':'error','laws':[],'ministries':[],'categories':[],'error':'First source sync failed. See GitHub Actions logs.'})
-            OUT.write_text(json.dumps(old,ensure_ascii=False,indent=2),encoding='utf-8')
-        # Nonzero exit is visible in Actions, but publishing is allowed to proceed separately.
-        return 1
-    return 0
+    try: old = json.loads(OUT.read_text(encoding='utf-8'))
+    except (FileNotFoundError,ValueError): old={}
+    catalog = {
+      'updatedAt':old.get('updatedAt'), 'source':SOURCES['laws'][1],
+      'status':'pending', 'error':None,
+      'laws':old.get('laws',[]), 'ministries':old.get('ministries',[]), 'categories':old.get('categories',[]),
+      'members':old.get('members',[]),'parties':old.get('parties',[]),'votes':old.get('votes',[]),
+      'control':old.get('control',[]),'documents':old.get('documents',[]),
+      'sources':dict(old.get('sources') or {}),
+    }
+    failures=[]; successes=0
+    for kind in ('laws','members','parties','votes','control','documents'):
+        src,link=SOURCES[kind]
+        previous=catalog.get(kind,[])
+        try:
+            fresh=run_source(kind)
+            # Do not silently shrink a populated dataset to a few records due to upstream changes.
+            if previous and len(fresh) < max(3,len(previous)//5):
+                raise RuntimeError(f'Unexpected dataset shrink: {len(previous)} -> {len(fresh)}')
+            catalog[kind]=fresh
+            catalog['sources'][kind]={'name':src,'url':link,'status':'ok','updatedAt':STAMP,'count':len(fresh)}
+            successes+=1
+        except Exception as e:
+            failures.append(kind)
+            catalog['sources'][kind]={'name':src,'url':link,'status':'stale' if previous else 'error',
+              'updatedAt':(catalog['sources'].get(kind) or {}).get('updatedAt'), 'count':len(previous), 'error':str(e)[:240]}
+            print(f'WARNING [{kind}] {type(e).__name__}: {e}',file=sys.stderr)
+    # Use fresh metadata when available, else retain last-good.
+    for name in ('ministries','categories'):
+        try:
+            raw=arr(fetch(PARLIAMENT,{'q':name}))
+            if raw:catalog[name]=raw
+        except Exception as e: print(f'WARNING [{name}]: {e}',file=sys.stderr)
+    if successes: catalog['updatedAt']=STAMP
+    catalog['status']='ok' if not failures else ('partial' if successes else 'stale')
+    if not successes and not any(catalog[k] for k in SOURCES): catalog['status']='error'
+    catalog['error']=f'Αποτυχία ενημέρωσης: {", ".join(failures)}' if failures else None
+    OUT.parent.mkdir(parents=True,exist_ok=True)
+    OUT.write_text(json.dumps(catalog,ensure_ascii=False,indent=2),encoding='utf-8')
+    print(f'THESMIO: {successes}/6 sources synced; laws={len(catalog["laws"])} members={len(catalog["members"])} parties={len(catalog["parties"])} votes={len(catalog["votes"])} control={len(catalog["control"])} documents={len(catalog["documents"])}')
+    # Explicit failed sources in GitHub Actions, but never destroy a good snapshot.
+    return 0 if successes else 1
 
-if __name__=='__main__':sys.exit(main())
+if __name__=='__main__': sys.exit(main())
