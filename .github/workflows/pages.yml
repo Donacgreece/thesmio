@@ -23,12 +23,30 @@ jobs:
         uses: actions/checkout@v4
         with:
           persist-credentials: true
+      - name: Validate data adapters
+        run: python3 -m unittest discover -s scripts -p 'test_*.py'
       - name: Collect open datasets
         id: sync
         continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python3 scripts/sync_data.py
+      - name: Report upstream source results
+        if: always()
+        shell: bash
+        run: |
+          python3 - <<'PYREPORT'
+          import json, os
+          from pathlib import Path
+          f=Path('public/data/catalog.json')
+          d=json.loads(f.read_text(encoding='utf-8')) if f.exists() else {}
+          with open(os.environ['GITHUB_STEP_SUMMARY'],'a',encoding='utf-8') as report:
+              report.write('## THESMIO data ingestion\n\n')
+              report.write('| Collection | Status | Entries | Detail |\n| --- | --- | ---: | --- |\n')
+              for key,src in (d.get('sources') or {}).items():
+                  msg=str(src.get('error','') or src.get('coverage','')).replace('|','/').replace('\n',' ')[:180]
+                  report.write(f"| {key} ({src.get('name','')}) | {src.get('status','unknown')} | {src.get('count',0)} | {msg} |\n")
+          PYREPORT
       - name: Persist latest verified snapshot
         continue-on-error: true
         shell: bash
@@ -45,7 +63,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: npm
       - name: Install packages
         run: npm install --no-audit --no-fund
       - name: Type-check

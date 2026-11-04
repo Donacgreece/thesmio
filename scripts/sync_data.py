@@ -300,6 +300,62 @@ def collect_law_archive():
     return list(result.values())
 
 
+
+def collect_gazette_index():
+    """Fallback index of actual FEK-A issue files, NOT an index of numbered laws.
+
+    Third-party versioned mirror: lighteternal/legalize-gr (MIT repository).
+    A single FEK issue can contain multiple acts, so NEVER map the FEK issue
+    number to a law number. Keep a deep link to the mirrored source document.
+    """
+    api='https://api.github.com/repos/lighteternal/legalize-gr/git/trees/main?recursive=1'
+    headers={'Accept':'application/vnd.github+json',
+             'User-Agent':'THESMIO/0.6 (+https://github.com/Donacgreece/thesmio)'}
+    token=os.getenv('GITHUB_TOKEN','')
+    if token:headers['Authorization']='Bearer '+token
+    with urlopen(Request(api,headers=headers),timeout=50) as response:
+        tree=json.load(response)
+    if not isinstance(tree,dict) or not isinstance(tree.get('tree'),list):
+        raise RuntimeError('Unexpected legalize-gr tree response')
+    if tree.get('truncated'):
+        raise RuntimeError('legalize-gr tree truncated; declining partial index')
+    matches=[]
+    for row in tree['tree']:
+        if row.get('type')!='blob':continue
+        path=row.get('path','')
+        match=re.fullmatch(r'gr/FEK-A-(\d{1,5})-(20\d{2})\.md',path,re.IGNORECASE)
+        if not match:continue
+        issue,year=int(match.group(1)),int(match.group(2))
+        if not 2000<=year<=datetime.now(timezone.utc).year or issue<1:continue
+        matches.append((year,issue,path))
+    if not matches:raise RuntimeError('No valid FEK A files in legalize-gr tree')
+    matches.sort(reverse=True)
+    # index the 2,500 newest gazette issues without requesting their complete text.
+    result=[]
+    for year,issue,path in matches[:2500]:
+        link='https://github.com/lighteternal/legalize-gr/blob/main/'+path
+        result.append({'id':f'fek-a-{year}-{issue}',
+                       'title':f'ΦΕΚ Α΄ {issue}/{year}',
+                       'lawnum':'','year':str(year),'datevoted':'','dateinserted':'',
+                       'ministry':'','category':'ΦΕΚ Α΄ (αρχείο τρίτου)',
+                       'url':link,'pdf':'',
+                       'description':'Τεύχος ΦΕΚ Α΄ σε αρχείο Markdown. Δεν αποτελεί αριθμό νόμου ή κωδικοποιημένο κείμενο.',
+                       'source':'https://github.com/lighteternal/legalize-gr'})
+    print(f'gazette mirror: {len(result)} FEK issues indexed (not numbered laws)')
+    return result
+
+
+def backup_legislation():
+    errors=[]
+    for provider in (collect_law_archive,collect_gazette_index):
+        try:
+            result=provider()
+            if result:return result
+        except Exception as exc:
+            errors.append(f'{getattr(provider, '__name__', 'collector')}: {exc}')
+            print(f'legislation backup failed: {errors[-1]}',file=sys.stderr)
+    raise RuntimeError('No legislative backup available: '+'; '.join(errors))
+
 def run_source(kind):
     if kind == 'diavgeia':
         return collect_diavgeia()
@@ -317,7 +373,7 @@ def run_source(kind):
                 print(f'laws: XML fallback returned {len(raw)} rows')
             except Exception as secondary:
                 print(f'Parliament JSON/XML unavailable ({secondary}); using attributed text archive fallback', file=sys.stderr)
-                return collect_law_archive()
+                return backup_legislation()
         cleaned = [law(x) for x in raw]
     elif kind == 'documents':
         raw = collect_pages(TRANSPARENCY, {'q':'documents'},kind,LIMITS[kind],30)
@@ -361,10 +417,10 @@ def main():
             if kind != 'diavgeia' and previous and len(fresh) < max(3,len(previous)//5):
                 raise RuntimeError(f'Unexpected dataset shrink: {len(previous)} -> {len(fresh)}')
             catalog[kind]=(sorted({r['id']:r for r in (previous + fresh)}.values(), key=lambda r:r.get('date',''), reverse=True)[:2500] if kind == 'diavgeia' else fresh)
-            catalog['sources'][kind]={'name':('Kafidas / just-text (εναλλακτικό αρχείο)' if kind=='laws' and fresh and fresh[0].get('id','').startswith('archive-') else src),
-              'url':('https://github.com/kafidas/just-text' if kind=='laws' and fresh and fresh[0].get('id','').startswith('archive-') else link),
-              'status':('fallback' if kind=='laws' and fresh and fresh[0].get('id','').startswith('archive-') else 'ok'),
-              'updatedAt':STAMP,'count':len(catalog[kind])}
+            catalog['sources'][kind]={'name':('Kafidas / just-text' if kind=='laws' and fresh and fresh[0].get('id','').startswith('archive-') else ('Legalize GR (ευρετήριο ΦΕΚ)' if kind=='laws' and fresh and fresh[0].get('id','').startswith('fek-a-') else src)),
+              'url':(fresh[0]['source'] if kind=='laws' and fresh and fresh[0].get('id','').startswith(('archive-','fek-a-')) else link),
+              'status':('fallback' if kind=='laws' and fresh and fresh[0].get('id','').startswith(('archive-','fek-a-')) else 'ok'),
+              'updatedAt':STAMP,'count':len(catalog[kind]),'coverage':('ΦΕΚ Α΄, όχι μεμονωμένοι νόμοι' if kind=='laws' and fresh and fresh[0].get('id','').startswith('fek-a-') else 'Κατάλογος διαθέσιμων εγγραφών')}
             successes+=1
         except Exception as e:
             failures.append(kind)
