@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-04T14:20:23.701002+00:00",
+  "updatedAt": "2026-11-04T14:33:56.213744+00:00",
   "source": "https://www.hellenicparliament.gr/opendata/",
   "status": "partial",
   "error": "Αποτυχία ενημέρωσης: documents",
@@ -11556,39 +11556,44 @@
   ],
   "sources": {
     "laws": {
-      "name": "Kafidas / just-text (εναλλακτικό αρχείο)",
+      "name": "Kafidas / just-text",
       "url": "https://github.com/kafidas/just-text",
       "status": "fallback",
-      "updatedAt": "2026-11-04T14:20:23.701002+00:00",
-      "count": 121
+      "updatedAt": "2026-11-04T14:33:56.213744+00:00",
+      "count": 121,
+      "coverage": "Κατάλογος διαθέσιμων εγγραφών"
     },
     "members": {
       "name": "Vouliwatch",
       "url": "https://api.vouliwatch.gr/v1",
       "status": "ok",
-      "updatedAt": "2026-11-04T14:20:23.701002+00:00",
-      "count": 318
+      "updatedAt": "2026-11-04T14:33:56.213744+00:00",
+      "count": 318,
+      "coverage": "Κατάλογος διαθέσιμων εγγραφών"
     },
     "parties": {
       "name": "Vouliwatch",
       "url": "https://api.vouliwatch.gr/v1",
       "status": "ok",
-      "updatedAt": "2026-11-04T14:20:23.701002+00:00",
-      "count": 40
+      "updatedAt": "2026-11-04T14:33:56.213744+00:00",
+      "count": 40,
+      "coverage": "Κατάλογος διαθέσιμων εγγραφών"
     },
     "votes": {
       "name": "Vouliwatch",
       "url": "https://api.vouliwatch.gr/v1",
       "status": "ok",
-      "updatedAt": "2026-11-04T14:20:23.701002+00:00",
-      "count": 100
+      "updatedAt": "2026-11-04T14:33:56.213744+00:00",
+      "count": 100,
+      "coverage": "Κατάλογος διαθέσιμων εγγραφών"
     },
     "control": {
       "name": "Vouliwatch",
       "url": "https://api.vouliwatch.gr/v1",
       "status": "ok",
-      "updatedAt": "2026-11-04T14:20:23.701002+00:00",
-      "count": 80
+      "updatedAt": "2026-11-04T14:33:56.213744+00:00",
+      "count": 80,
+      "coverage": "Κατάλογος διαθέσιμων εγγραφών"
     },
     "documents": {
       "name": "Διαφάνεια της Βουλής",
@@ -11602,8 +11607,9 @@
       "name": "Πρόγραμμα Διαύγεια",
       "url": "https://diavgeia.gov.gr/api/help",
       "status": "ok",
-      "updatedAt": "2026-11-04T14:20:23.701002+00:00",
-      "count": 500
+      "updatedAt": "2026-11-04T14:33:56.213744+00:00",
+      "count": 500,
+      "coverage": "Κατάλογος διαθέσιμων εγγραφών"
     }
   }
 }
