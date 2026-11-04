@@ -1,0 +1,9 @@
+{
+  "updatedAt": null,
+  "source": "https://www.hellenicparliament.gr/opendata/",
+  "status": "error",
+  "laws": [],
+  "ministries": [],
+  "categories": [],
+  "error": "First source sync failed. See GitHub Actions logs."
+}
