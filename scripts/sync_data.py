@@ -12,6 +12,7 @@ import os
 import re
 import sys
 import time
+import xml.etree.ElementTree as ET
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from urllib.parse import urlencode, urlparse
@@ -66,6 +67,20 @@ def fetch(url, params=None):
         except Exception as exc:
             if attempt == 2: raise RuntimeError(f'{url}: {type(exc).__name__}: {exc}') from exc
             time.sleep(2 * (attempt + 1))
+
+
+def xml_law_rows(payload):
+    """Best-effort parsing of the Parliament API's documented XML representation."""
+    root=ET.fromstring(payload)
+    items=[]
+    for node in root.iter():
+        children=list(node)
+        if not children: continue
+        row={child.tag.split('}')[-1]: (child.text or '').strip() for child in children if not list(child)}
+        keys={k.lower() for k in row}
+        if ('title' in keys or 'lawtitle' in keys or 'lawnum' in keys) and len(row)>=2:
+            items.append(row)
+    return items
 
 
 def arr(body):
@@ -243,7 +258,19 @@ def run_source(kind):
     if kind == 'diavgeia':
         return collect_diavgeia()
     if kind == 'laws':
-        raw = collect_pages(PARLIAMENT, {'q':'laws'}, kind, LIMITS[kind], 50)
+        try:
+            raw = collect_pages(PARLIAMENT, {'q':'laws'}, kind, LIMITS[kind], 50)
+        except Exception as primary:
+            print(f'laws: JSON endpoint failed ({primary}); trying official XML format', file=sys.stderr)
+            xmlurl = PARLIAMENT + '?' + urlencode({'q':'laws','pageNo':1,'pageSize':50,'format':'xml'})
+            request = Request(xmlurl, headers={'User-Agent':'THESMIO-OpenData/0.4.1 (https://github.com/Donacgreece/thesmio)','Accept':'application/xml,text/xml'})
+            try:
+                with urlopen(request, timeout=35) as response:
+                    raw = xml_law_rows(response.read(12_000_000).decode('utf-8-sig'))
+                if not raw: raise RuntimeError('XML returned no recognized legislative rows')
+                print(f'laws: XML fallback returned {len(raw)} rows')
+            except Exception as secondary:
+                raise RuntimeError(f'Parliament JSON failed: {primary}; XML fallback failed: {secondary}') from secondary
         cleaned = [law(x) for x in raw]
     elif kind == 'documents':
         raw = collect_pages(TRANSPARENCY, {'q':'documents'},kind,LIMITS[kind],30)
@@ -292,7 +319,7 @@ def main():
         except Exception as e:
             failures.append(kind)
             catalog['sources'][kind]={'name':src,'url':link,'status':'stale' if previous else 'error',
-              'updatedAt':(catalog['sources'].get(kind) or {}).get('updatedAt'), 'count':len(previous), 'error':str(e)[:240]}
+              'updatedAt':(catalog['sources'].get(kind) or {}).get('updatedAt'), 'count':len(previous), 'error':str(e)[:700]}
             print(f'WARNING [{kind}] {type(e).__name__}: {e}',file=sys.stderr)
     # Use fresh metadata when available, else retain last-good.
     for name in ('ministries','categories'):

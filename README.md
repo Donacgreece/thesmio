@@ -35,3 +35,10 @@
 ## Περιορισμοί
 
 Δεν έχει επαληθευτεί από αυτό το περιβάλλον επιτυχημένη ανάκτηση δεδομένων από τα live API ή πλήρες npm build, εξαιτίας δικτυακών περιορισμών. Η έκδοση απαιτεί πραγματικό έλεγχο του Actions log και δεν πρέπει να χαρακτηριστεί πλήρης νομοθετική κάλυψη πριν αυτός ολοκληρωθεί.
+
+
+## v0.4.1
+- Compact responsive navigation, accessible dropdowns, Escape and outside-click closing.
+- Official Parliament XML fallback when `q=laws` JSON sync fails.
+- Improved GitHub Actions API diagnostics. The fallback is best-effort and does not guarantee live availability.
+- The website never invents missing laws. Inspect the GitHub Actions `Collect open datasets` step if `laws` remains 0.
