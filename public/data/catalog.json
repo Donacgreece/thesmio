@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-07T10:03:49.404169+00:00",
+  "updatedAt": "2026-11-07T19:25:08.858263+00:00",
   "source": "https://www.hellenicparliament.gr/opendata/",
   "status": "partial",
   "error": "Αποτυχία ενημέρωσης: documents",
@@ -26569,7 +26569,7 @@
       "name": "Kafidas / just-text",
       "url": "https://github.com/kafidas/just-text",
       "status": "fallback",
-      "updatedAt": "2026-11-07T10:03:49.404169+00:00",
+      "updatedAt": "2026-11-07T19:25:08.858263+00:00",
       "count": 121,
       "coverage": "Κατάλογος διαθέσιμων εγγραφών"
     },
@@ -26577,7 +26577,7 @@
       "name": "Vouliwatch",
       "url": "https://api.vouliwatch.gr/v1",
       "status": "ok",
-      "updatedAt": "2026-11-07T10:03:49.404169+00:00",
+      "updatedAt": "2026-11-07T19:25:08.858263+00:00",
       "count": 318,
       "coverage": "Κατάλογος διαθέσιμων εγγραφών"
     },
@@ -26585,7 +26585,7 @@
       "name": "Vouliwatch",
       "url": "https://api.vouliwatch.gr/v1",
       "status": "ok",
-      "updatedAt": "2026-11-07T10:03:49.404169+00:00",
+      "updatedAt": "2026-11-07T19:25:08.858263+00:00",
       "count": 40,
       "coverage": "Κατάλογος διαθέσιμων εγγραφών"
     },
@@ -26593,7 +26593,7 @@
       "name": "Vouliwatch",
       "url": "https://api.vouliwatch.gr/v1",
       "status": "ok",
-      "updatedAt": "2026-11-07T10:03:49.404169+00:00",
+      "updatedAt": "2026-11-07T19:25:08.858263+00:00",
       "count": 100,
       "coverage": "Κατάλογος διαθέσιμων εγγραφών"
     },
@@ -26601,7 +26601,7 @@
       "name": "Vouliwatch",
       "url": "https://api.vouliwatch.gr/v1",
       "status": "ok",
-      "updatedAt": "2026-11-07T10:03:49.404169+00:00",
+      "updatedAt": "2026-11-07T19:25:08.858263+00:00",
       "count": 80,
       "coverage": "Κατάλογος διαθέσιμων εγγραφών"
     },
@@ -26617,7 +26617,7 @@
       "name": "Πρόγραμμα Διαύγεια",
       "url": "https://diavgeia.gov.gr/api/help",
       "status": "ok",
-      "updatedAt": "2026-11-07T10:03:49.404169+00:00",
+      "updatedAt": "2026-11-07T19:25:08.858263+00:00",
       "count": 2001,
       "coverage": "Κατάλογος διαθέσιμων εγγραφών"
     }
