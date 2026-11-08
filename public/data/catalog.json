@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-08T00:33:59.210302+00:00",
+  "updatedAt": "2026-11-08T10:17:55.164954+00:00",
   "source": "https://www.hellenicparliament.gr/opendata/",
   "status": "partial",
   "error": "Αποτυχία ενημέρωσης: documents",
@@ -1730,18 +1730,18 @@
       "detail": ""
     },
     {
-      "id": "3f5c9cf1-5aaf-423c-af8a-6f998bd69043",
-      "title": "Μαρία Αθανασίου",
-      "subtitle": "Ελληνική Λύση",
+      "id": "145b4fd9-31fb-428c-b59d-ae301c2f51d6",
+      "title": "Χαράλαμπος Αθανασίου",
+      "subtitle": "Νέα Δημοκρατία",
       "date": "",
       "url": "",
       "source": "Vouliwatch",
       "detail": ""
     },
     {
-      "id": "145b4fd9-31fb-428c-b59d-ae301c2f51d6",
-      "title": "Χαράλαμπος Αθανασίου",
-      "subtitle": "Νέα Δημοκρατία",
+      "id": "3f5c9cf1-5aaf-423c-af8a-6f998bd69043",
+      "title": "Μαρία Αθανασίου",
+      "subtitle": "Ελληνική Λύση",
       "date": "",
       "url": "",
       "source": "Vouliwatch",
@@ -1865,15 +1865,6 @@
       "detail": ""
     },
     {
-      "id": "7eb31317-fdb6-4e80-8f2c-ede8d9b4fb88",
-      "title": "Γεώργιος Αποστολάκης",
-      "subtitle": "",
-      "date": "",
-      "url": "",
-      "source": "Vouliwatch",
-      "detail": ""
-    },
-    {
       "id": "4a2148a9-c414-4c59-b894-d169f3e3b585",
       "title": "Ευάγγελος Αποστολάκης",
       "subtitle": "ΠΑΣΟΚ-Κίνημα Αλλαγής",
@@ -1883,9 +1874,9 @@
       "detail": ""
     },
     {
-      "id": "7f0d071f-d716-44d0-b27c-9a959f7ce3c4",
-      "title": "Φωτεινή Αραμπατζή",
-      "subtitle": "Νέα Δημοκρατία",
+      "id": "7eb31317-fdb6-4e80-8f2c-ede8d9b4fb88",
+      "title": "Γεώργιος Αποστολάκης",
+      "subtitle": "",
       "date": "",
       "url": "",
       "source": "Vouliwatch",
@@ -1894,6 +1885,15 @@
     {
       "id": "4a9c64c5-b184-4cf4-81fa-83ecbd37b65f",
       "title": "Στεργιανή (Στέλλα) Αραμπατζή",
+      "subtitle": "Νέα Δημοκρατία",
+      "date": "",
+      "url": "",
+      "source": "Vouliwatch",
+      "detail": ""
+    },
+    {
+      "id": "7f0d071f-d716-44d0-b27c-9a959f7ce3c4",
+      "title": "Φωτεινή Αραμπατζή",
       "subtitle": "Νέα Δημοκρατία",
       "date": "",
       "url": "",
@@ -3602,15 +3602,6 @@
       "detail": ""
     },
     {
-      "id": "761095cc-fd76-4109-872d-5d4322017872",
-      "title": "Θωμαΐς (Τζίνα) Οικονόμου",
-      "subtitle": "Νέα Δημοκρατία",
-      "date": "",
-      "url": "",
-      "source": "Vouliwatch",
-      "detail": ""
-    },
-    {
       "id": "01e911e3-9b89-4b12-bbbd-02409a8dcf0f",
       "title": "Βασίλειος Οικονόμου",
       "subtitle": "Νέα Δημοκρατία",
@@ -3622,6 +3613,15 @@
     {
       "id": "57c46463-94f7-4a83-bc75-334b98b68810",
       "title": "Ιωάννης Οικονόμου",
+      "subtitle": "Νέα Δημοκρατία",
+      "date": "",
+      "url": "",
+      "source": "Vouliwatch",
+      "detail": ""
+    },
+    {
+      "id": "761095cc-fd76-4109-872d-5d4322017872",
+      "title": "Θωμαΐς (Τζίνα) Οικονόμου",
       "subtitle": "Νέα Δημοκρατία",
       "date": "",
       "url": "",
@@ -3719,8 +3719,8 @@
       "detail": ""
     },
     {
-      "id": "fe06c0fb-b475-4d93-9da0-9c757fa33cd5",
-      "title": "Αθανάσιος Παπαθανάσης",
+      "id": "149ba20c-4b52-4010-a85f-5a6d8a693260",
+      "title": "Νικόλαος Παπαθανάσης",
       "subtitle": "Νέα Δημοκρατία",
       "date": "",
       "url": "",
@@ -3728,8 +3728,8 @@
       "detail": ""
     },
     {
-      "id": "149ba20c-4b52-4010-a85f-5a6d8a693260",
-      "title": "Νικόλαος Παπαθανάσης",
+      "id": "fe06c0fb-b475-4d93-9da0-9c757fa33cd5",
+      "title": "Αθανάσιος Παπαθανάσης",
       "subtitle": "Νέα Δημοκρατία",
       "date": "",
       "url": "",
@@ -4151,8 +4151,8 @@
       "detail": ""
     },
     {
-      "id": "ff4e854c-bc12-47ec-a1ae-ab9582aa000b",
-      "title": "Χρήστος Στυλιανίδης",
+      "id": "548908b3-4ecb-4d71-a7a1-64fc0b6bbe68",
+      "title": "Ευριπίδης Στυλιανίδης",
       "subtitle": "Νέα Δημοκρατία",
       "date": "",
       "url": "",
@@ -4160,8 +4160,8 @@
       "detail": ""
     },
     {
-      "id": "548908b3-4ecb-4d71-a7a1-64fc0b6bbe68",
-      "title": "Ευριπίδης Στυλιανίδης",
+      "id": "ff4e854c-bc12-47ec-a1ae-ab9582aa000b",
+      "title": "Χρήστος Στυλιανίδης",
       "subtitle": "Νέα Δημοκρατία",
       "date": "",
       "url": "",
@@ -31559,7 +31559,7 @@
       "name": "Kafidas / just-text",
       "url": "https://github.com/kafidas/just-text",
       "status": "fallback",
-      "updatedAt": "2026-11-08T00:33:59.210302+00:00",
+      "updatedAt": "2026-11-08T10:17:55.164954+00:00",
       "count": 121,
       "coverage": "Κατάλογος διαθέσιμων εγγραφών"
     },
@@ -31567,7 +31567,7 @@
       "name": "Vouliwatch",
       "url": "https://api.vouliwatch.gr/v1",
       "status": "ok",
-      "updatedAt": "2026-11-08T00:33:59.210302+00:00",
+      "updatedAt": "2026-11-08T10:17:55.164954+00:00",
       "count": 318,
       "coverage": "Κατάλογος διαθέσιμων εγγραφών"
     },
@@ -31575,7 +31575,7 @@
       "name": "Vouliwatch",
       "url": "https://api.vouliwatch.gr/v1",
       "status": "ok",
-      "updatedAt": "2026-11-08T00:33:59.210302+00:00",
+      "updatedAt": "2026-11-08T10:17:55.164954+00:00",
       "count": 40,
       "coverage": "Κατάλογος διαθέσιμων εγγραφών"
     },
@@ -31583,7 +31583,7 @@
       "name": "Vouliwatch",
       "url": "https://api.vouliwatch.gr/v1",
       "status": "ok",
-      "updatedAt": "2026-11-08T00:33:59.210302+00:00",
+      "updatedAt": "2026-11-08T10:17:55.164954+00:00",
       "count": 100,
       "coverage": "Κατάλογος διαθέσιμων εγγραφών"
     },
@@ -31591,7 +31591,7 @@
       "name": "Vouliwatch",
       "url": "https://api.vouliwatch.gr/v1",
       "status": "ok",
-      "updatedAt": "2026-11-08T00:33:59.210302+00:00",
+      "updatedAt": "2026-11-08T10:17:55.164954+00:00",
       "count": 80,
       "coverage": "Κατάλογος διαθέσιμων εγγραφών"
     },
@@ -31607,7 +31607,7 @@
       "name": "Πρόγραμμα Διαύγεια",
       "url": "https://diavgeia.gov.gr/api/help",
       "status": "ok",
-      "updatedAt": "2026-11-08T00:33:59.210302+00:00",
+      "updatedAt": "2026-11-08T10:17:55.164954+00:00",
       "count": 2500,
       "coverage": "Κατάλογος διαθέσιμων εγγραφών"
     }
