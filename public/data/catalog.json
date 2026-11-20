@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-20T11:35:08.410766+00:00",
+  "updatedAt": "2026-11-20T22:14:33.886027+00:00",
   "source": "https://www.hellenicparliament.gr/opendata/",
   "status": "partial",
   "error": "Αποτυχία ενημέρωσης: documents",
@@ -2846,18 +2846,18 @@
       "detail": ""
     },
     {
-      "id": "a332732b-f3e3-4dbe-82cf-1ef5a9000e9b",
-      "title": "Συμεών (Σίμος) Κεδίκογλου",
-      "subtitle": "Νέα Δημοκρατία",
+      "id": "7c3fcb91-2e01-4e33-a2b7-312a7042e2af",
+      "title": "Συμεών Κεδίκογλου",
+      "subtitle": "",
       "date": "",
       "url": "",
       "source": "Vouliwatch",
       "detail": ""
     },
     {
-      "id": "7c3fcb91-2e01-4e33-a2b7-312a7042e2af",
-      "title": "Συμεών Κεδίκογλου",
-      "subtitle": "",
+      "id": "a332732b-f3e3-4dbe-82cf-1ef5a9000e9b",
+      "title": "Συμεών (Σίμος) Κεδίκογλου",
+      "subtitle": "Νέα Δημοκρατία",
       "date": "",
       "url": "",
       "source": "Vouliwatch",
@@ -31568,7 +31568,7 @@
       "name": "Kafidas / just-text",
       "url": "https://github.com/kafidas/just-text",
       "status": "fallback",
-      "updatedAt": "2026-11-20T11:35:08.410766+00:00",
+      "updatedAt": "2026-11-20T22:14:33.886027+00:00",
       "count": 121,
       "coverage": "Κατάλογος διαθέσιμων εγγραφών"
     },
@@ -31576,7 +31576,7 @@
       "name": "Vouliwatch",
       "url": "https://api.vouliwatch.gr/v1",
       "status": "ok",
-      "updatedAt": "2026-11-20T11:35:08.410766+00:00",
+      "updatedAt": "2026-11-20T22:14:33.886027+00:00",
       "count": 319,
       "coverage": "Κατάλογος διαθέσιμων εγγραφών"
     },
@@ -31584,7 +31584,7 @@
       "name": "Vouliwatch",
       "url": "https://api.vouliwatch.gr/v1",
       "status": "ok",
-      "updatedAt": "2026-11-20T11:35:08.410766+00:00",
+      "updatedAt": "2026-11-20T22:14:33.886027+00:00",
       "count": 40,
       "coverage": "Κατάλογος διαθέσιμων εγγραφών"
     },
@@ -31592,7 +31592,7 @@
       "name": "Vouliwatch",
       "url": "https://api.vouliwatch.gr/v1",
       "status": "ok",
-      "updatedAt": "2026-11-20T11:35:08.410766+00:00",
+      "updatedAt": "2026-11-20T22:14:33.886027+00:00",
       "count": 100,
       "coverage": "Κατάλογος διαθέσιμων εγγραφών"
     },
@@ -31600,7 +31600,7 @@
       "name": "Vouliwatch",
       "url": "https://api.vouliwatch.gr/v1",
       "status": "ok",
-      "updatedAt": "2026-11-20T11:35:08.410766+00:00",
+      "updatedAt": "2026-11-20T22:14:33.886027+00:00",
       "count": 80,
       "coverage": "Κατάλογος διαθέσιμων εγγραφών"
     },
@@ -31616,7 +31616,7 @@
       "name": "Πρόγραμμα Διαύγεια",
       "url": "https://diavgeia.gov.gr/api/help",
       "status": "ok",
-      "updatedAt": "2026-11-20T11:35:08.410766+00:00",
+      "updatedAt": "2026-11-20T22:14:33.886027+00:00",
       "count": 2500,
       "coverage": "Κατάλογος διαθέσιμων εγγραφών"
     }
