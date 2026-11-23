@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-23T01:40:20.027249+00:00",
+  "updatedAt": "2026-11-23T12:32:52.558469+00:00",
   "source": "https://www.hellenicparliament.gr/opendata/",
   "status": "partial",
   "error": "Αποτυχία ενημέρωσης: documents",
@@ -1730,18 +1730,18 @@
       "detail": ""
     },
     {
-      "id": "145b4fd9-31fb-428c-b59d-ae301c2f51d6",
-      "title": "Χαράλαμπος Αθανασίου",
-      "subtitle": "Νέα Δημοκρατία",
+      "id": "3f5c9cf1-5aaf-423c-af8a-6f998bd69043",
+      "title": "Μαρία Αθανασίου",
+      "subtitle": "Ελληνική Λύση",
       "date": "",
       "url": "",
       "source": "Vouliwatch",
       "detail": ""
     },
     {
-      "id": "3f5c9cf1-5aaf-423c-af8a-6f998bd69043",
-      "title": "Μαρία Αθανασίου",
-      "subtitle": "Ελληνική Λύση",
+      "id": "145b4fd9-31fb-428c-b59d-ae301c2f51d6",
+      "title": "Χαράλαμπος Αθανασίου",
+      "subtitle": "Νέα Δημοκρατία",
       "date": "",
       "url": "",
       "source": "Vouliwatch",
@@ -2846,18 +2846,18 @@
       "detail": ""
     },
     {
-      "id": "a332732b-f3e3-4dbe-82cf-1ef5a9000e9b",
-      "title": "Συμεών (Σίμος) Κεδίκογλου",
-      "subtitle": "Νέα Δημοκρατία",
+      "id": "7c3fcb91-2e01-4e33-a2b7-312a7042e2af",
+      "title": "Συμεών Κεδίκογλου",
+      "subtitle": "",
       "date": "",
       "url": "",
       "source": "Vouliwatch",
       "detail": ""
     },
     {
-      "id": "7c3fcb91-2e01-4e33-a2b7-312a7042e2af",
-      "title": "Συμεών Κεδίκογλου",
-      "subtitle": "",
+      "id": "a332732b-f3e3-4dbe-82cf-1ef5a9000e9b",
+      "title": "Συμεών (Σίμος) Κεδίκογλου",
+      "subtitle": "Νέα Δημοκρατία",
       "date": "",
       "url": "",
       "source": "Vouliwatch",
@@ -3701,18 +3701,18 @@
       "detail": ""
     },
     {
-      "id": "378bbd4c-71a2-4a8a-94a4-fb919ef55951",
-      "title": "Μιχάλης Παπαδόπουλος",
-      "subtitle": "Νέα Δημοκρατία",
+      "id": "fb9f858c-abbe-46a9-ac2d-e5c59439e0b3",
+      "title": "Νίκος Παπαδόπουλος",
+      "subtitle": "Ελληνικός Παλμός",
       "date": "",
       "url": "",
       "source": "Vouliwatch",
       "detail": ""
     },
     {
-      "id": "fb9f858c-abbe-46a9-ac2d-e5c59439e0b3",
-      "title": "Νίκος Παπαδόπουλος",
-      "subtitle": "Ελληνικός Παλμός",
+      "id": "378bbd4c-71a2-4a8a-94a4-fb919ef55951",
+      "title": "Μιχάλης Παπαδόπουλος",
+      "subtitle": "Νέα Δημοκρατία",
       "date": "",
       "url": "",
       "source": "Vouliwatch",
@@ -3728,8 +3728,8 @@
       "detail": ""
     },
     {
-      "id": "fe06c0fb-b475-4d93-9da0-9c757fa33cd5",
-      "title": "Αθανάσιος Παπαθανάσης",
+      "id": "149ba20c-4b52-4010-a85f-5a6d8a693260",
+      "title": "Νικόλαος Παπαθανάσης",
       "subtitle": "Νέα Δημοκρατία",
       "date": "",
       "url": "",
@@ -3737,8 +3737,8 @@
       "detail": ""
     },
     {
-      "id": "149ba20c-4b52-4010-a85f-5a6d8a693260",
-      "title": "Νικόλαος Παπαθανάσης",
+      "id": "fe06c0fb-b475-4d93-9da0-9c757fa33cd5",
+      "title": "Αθανάσιος Παπαθανάσης",
       "subtitle": "Νέα Δημοκρατία",
       "date": "",
       "url": "",
@@ -3800,18 +3800,18 @@
       "detail": ""
     },
     {
-      "id": "e8d684f3-ee84-483d-ad9b-297cc397851d",
-      "title": "Νίκος Παππάς",
-      "subtitle": "Συνασπισμός Ριζοσπαστικής Αριστεράς",
+      "id": "588e763e-8ad8-4824-9801-206ba7ac7869",
+      "title": "Πέτρος Παππάς",
+      "subtitle": "ΠΑΣΟΚ-Κίνημα Αλλαγής",
       "date": "",
       "url": "",
       "source": "Vouliwatch",
       "detail": ""
     },
     {
-      "id": "588e763e-8ad8-4824-9801-206ba7ac7869",
-      "title": "Πέτρος Παππάς",
-      "subtitle": "ΠΑΣΟΚ-Κίνημα Αλλαγής",
+      "id": "e8d684f3-ee84-483d-ad9b-297cc397851d",
+      "title": "Νίκος Παππάς",
+      "subtitle": "Συνασπισμός Ριζοσπαστικής Αριστεράς",
       "date": "",
       "url": "",
       "source": "Vouliwatch",
@@ -4475,8 +4475,8 @@
       "detail": ""
     },
     {
-      "id": "63897d58-fced-4b0a-8326-3f200142e84a",
-      "title": "Διονύσιος Χατζηδάκης",
+      "id": "e29553ce-53d9-405e-b07e-7e8b9030ca61",
+      "title": "Κωνσταντίνος (Κωστής) Χατζηδάκης",
       "subtitle": "Νέα Δημοκρατία",
       "date": "",
       "url": "",
@@ -4484,8 +4484,8 @@
       "detail": ""
     },
     {
-      "id": "e29553ce-53d9-405e-b07e-7e8b9030ca61",
-      "title": "Κωνσταντίνος (Κωστής) Χατζηδάκης",
+      "id": "63897d58-fced-4b0a-8326-3f200142e84a",
+      "title": "Διονύσιος Χατζηδάκης",
       "subtitle": "Νέα Δημοκρατία",
       "date": "",
       "url": "",
@@ -31568,7 +31568,7 @@
       "name": "Kafidas / just-text",
       "url": "https://github.com/kafidas/just-text",
       "status": "fallback",
-      "updatedAt": "2026-11-23T01:40:20.027249+00:00",
+      "updatedAt": "2026-11-23T12:32:52.558469+00:00",
       "count": 121,
       "coverage": "Κατάλογος διαθέσιμων εγγραφών"
     },
@@ -31576,7 +31576,7 @@
       "name": "Vouliwatch",
       "url": "https://api.vouliwatch.gr/v1",
       "status": "ok",
-      "updatedAt": "2026-11-23T01:40:20.027249+00:00",
+      "updatedAt": "2026-11-23T12:32:52.558469+00:00",
       "count": 319,
       "coverage": "Κατάλογος διαθέσιμων εγγραφών"
     },
@@ -31584,7 +31584,7 @@
       "name": "Vouliwatch",
       "url": "https://api.vouliwatch.gr/v1",
       "status": "ok",
-      "updatedAt": "2026-11-23T01:40:20.027249+00:00",
+      "updatedAt": "2026-11-23T12:32:52.558469+00:00",
       "count": 40,
       "coverage": "Κατάλογος διαθέσιμων εγγραφών"
     },
@@ -31592,7 +31592,7 @@
       "name": "Vouliwatch",
       "url": "https://api.vouliwatch.gr/v1",
       "status": "ok",
-      "updatedAt": "2026-11-23T01:40:20.027249+00:00",
+      "updatedAt": "2026-11-23T12:32:52.558469+00:00",
       "count": 100,
       "coverage": "Κατάλογος διαθέσιμων εγγραφών"
     },
@@ -31600,7 +31600,7 @@
       "name": "Vouliwatch",
       "url": "https://api.vouliwatch.gr/v1",
       "status": "ok",
-      "updatedAt": "2026-11-23T01:40:20.027249+00:00",
+      "updatedAt": "2026-11-23T12:32:52.558469+00:00",
       "count": 80,
       "coverage": "Κατάλογος διαθέσιμων εγγραφών"
     },
@@ -31616,7 +31616,7 @@
       "name": "Πρόγραμμα Διαύγεια",
       "url": "https://diavgeia.gov.gr/api/help",
       "status": "ok",
-      "updatedAt": "2026-11-23T01:40:20.027249+00:00",
+      "updatedAt": "2026-11-23T12:32:52.558469+00:00",
       "count": 2500,
       "coverage": "Κατάλογος διαθέσιμων εγγραφών"
     }
