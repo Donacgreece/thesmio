@@ -1,8 +1,8 @@
 {
-  "updatedAt": "2026-11-26T12:28:19.310650+00:00",
+  "updatedAt": "2026-11-26T23:50:12.781194+00:00",
   "source": "https://www.hellenicparliament.gr/opendata/",
   "status": "partial",
-  "error": "Αποτυχία ενημέρωσης: documents",
+  "error": "Αποτυχία ενημέρωσης: control, documents",
   "laws": [
     {
       "id": "archive-5134/2024",
@@ -2846,18 +2846,18 @@
       "detail": ""
     },
     {
-      "id": "7c3fcb91-2e01-4e33-a2b7-312a7042e2af",
-      "title": "Συμεών Κεδίκογλου",
-      "subtitle": "",
+      "id": "a332732b-f3e3-4dbe-82cf-1ef5a9000e9b",
+      "title": "Συμεών (Σίμος) Κεδίκογλου",
+      "subtitle": "Νέα Δημοκρατία",
       "date": "",
       "url": "",
       "source": "Vouliwatch",
       "detail": ""
     },
     {
-      "id": "a332732b-f3e3-4dbe-82cf-1ef5a9000e9b",
-      "title": "Συμεών (Σίμος) Κεδίκογλου",
-      "subtitle": "Νέα Δημοκρατία",
+      "id": "7c3fcb91-2e01-4e33-a2b7-312a7042e2af",
+      "title": "Συμεών Κεδίκογλου",
+      "subtitle": "",
       "date": "",
       "url": "",
       "source": "Vouliwatch",
@@ -3620,8 +3620,8 @@
       "detail": ""
     },
     {
-      "id": "01e911e3-9b89-4b12-bbbd-02409a8dcf0f",
-      "title": "Βασίλειος Οικονόμου",
+      "id": "57c46463-94f7-4a83-bc75-334b98b68810",
+      "title": "Ιωάννης Οικονόμου",
       "subtitle": "Νέα Δημοκρατία",
       "date": "",
       "url": "",
@@ -3629,8 +3629,8 @@
       "detail": ""
     },
     {
-      "id": "57c46463-94f7-4a83-bc75-334b98b68810",
-      "title": "Ιωάννης Οικονόμου",
+      "id": "01e911e3-9b89-4b12-bbbd-02409a8dcf0f",
+      "title": "Βασίλειος Οικονόμου",
       "subtitle": "Νέα Δημοκρατία",
       "date": "",
       "url": "",
@@ -3665,18 +3665,18 @@
       "detail": ""
     },
     {
-      "id": "59d38f36-18ab-4b91-9377-14e760045200",
-      "title": "Ανδρέας Παναγιωτόπουλος",
-      "subtitle": "",
+      "id": "c510d800-89c6-4c76-b3d5-eda945fcdbbb",
+      "title": "Νικόλαος Παναγιωτόπουλος",
+      "subtitle": "Νέα Δημοκρατία",
       "date": "",
       "url": "",
       "source": "Vouliwatch",
       "detail": ""
     },
     {
-      "id": "c510d800-89c6-4c76-b3d5-eda945fcdbbb",
-      "title": "Νικόλαος Παναγιωτόπουλος",
-      "subtitle": "Νέα Δημοκρατία",
+      "id": "59d38f36-18ab-4b91-9377-14e760045200",
+      "title": "Ανδρέας Παναγιωτόπουλος",
+      "subtitle": "",
       "date": "",
       "url": "",
       "source": "Vouliwatch",
@@ -3728,8 +3728,8 @@
       "detail": ""
     },
     {
-      "id": "149ba20c-4b52-4010-a85f-5a6d8a693260",
-      "title": "Νικόλαος Παπαθανάσης",
+      "id": "fe06c0fb-b475-4d93-9da0-9c757fa33cd5",
+      "title": "Αθανάσιος Παπαθανάσης",
       "subtitle": "Νέα Δημοκρατία",
       "date": "",
       "url": "",
@@ -3737,8 +3737,8 @@
       "detail": ""
     },
     {
-      "id": "fe06c0fb-b475-4d93-9da0-9c757fa33cd5",
-      "title": "Αθανάσιος Παπαθανάσης",
+      "id": "149ba20c-4b52-4010-a85f-5a6d8a693260",
+      "title": "Νικόλαος Παπαθανάσης",
       "subtitle": "Νέα Δημοκρατία",
       "date": "",
       "url": "",
@@ -3791,15 +3791,6 @@
       "detail": ""
     },
     {
-      "id": "588e763e-8ad8-4824-9801-206ba7ac7869",
-      "title": "Πέτρος Παππάς",
-      "subtitle": "ΠΑΣΟΚ-Κίνημα Αλλαγής",
-      "date": "",
-      "url": "",
-      "source": "Vouliwatch",
-      "detail": ""
-    },
-    {
       "id": "e8d684f3-ee84-483d-ad9b-297cc397851d",
       "title": "Νίκος Παππάς",
       "subtitle": "Συνασπισμός Ριζοσπαστικής Αριστεράς",
@@ -3812,6 +3803,15 @@
       "id": "4cf91987-d403-41bc-ab59-4caca91f36d0",
       "title": "Ιωάννης Παππάς",
       "subtitle": "Νέα Δημοκρατία",
+      "date": "",
+      "url": "",
+      "source": "Vouliwatch",
+      "detail": ""
+    },
+    {
+      "id": "588e763e-8ad8-4824-9801-206ba7ac7869",
+      "title": "Πέτρος Παππάς",
+      "subtitle": "ΠΑΣΟΚ-Κίνημα Αλλαγής",
       "date": "",
       "url": "",
       "source": "Vouliwatch",
@@ -4160,8 +4160,8 @@
       "detail": ""
     },
     {
-      "id": "548908b3-4ecb-4d71-a7a1-64fc0b6bbe68",
-      "title": "Ευριπίδης Στυλιανίδης",
+      "id": "ff4e854c-bc12-47ec-a1ae-ab9582aa000b",
+      "title": "Χρήστος Στυλιανίδης",
       "subtitle": "Νέα Δημοκρατία",
       "date": "",
       "url": "",
@@ -4169,8 +4169,8 @@
       "detail": ""
     },
     {
-      "id": "ff4e854c-bc12-47ec-a1ae-ab9582aa000b",
-      "title": "Χρήστος Στυλιανίδης",
+      "id": "548908b3-4ecb-4d71-a7a1-64fc0b6bbe68",
+      "title": "Ευριπίδης Στυλιανίδης",
       "subtitle": "Νέα Δημοκρατία",
       "date": "",
       "url": "",
@@ -31568,7 +31568,7 @@
       "name": "Kafidas / just-text",
       "url": "https://github.com/kafidas/just-text",
       "status": "fallback",
-      "updatedAt": "2026-11-26T12:28:19.310650+00:00",
+      "updatedAt": "2026-11-26T23:50:12.781194+00:00",
       "count": 121,
       "coverage": "Κατάλογος διαθέσιμων εγγραφών"
     },
@@ -31576,7 +31576,7 @@
       "name": "Vouliwatch",
       "url": "https://api.vouliwatch.gr/v1",
       "status": "ok",
-      "updatedAt": "2026-11-26T12:28:19.310650+00:00",
+      "updatedAt": "2026-11-26T23:50:12.781194+00:00",
       "count": 319,
       "coverage": "Κατάλογος διαθέσιμων εγγραφών"
     },
@@ -31584,7 +31584,7 @@
       "name": "Vouliwatch",
       "url": "https://api.vouliwatch.gr/v1",
       "status": "ok",
-      "updatedAt": "2026-11-26T12:28:19.310650+00:00",
+      "updatedAt": "2026-11-26T23:50:12.781194+00:00",
       "count": 40,
       "coverage": "Κατάλογος διαθέσιμων εγγραφών"
     },
@@ -31592,17 +31592,17 @@
       "name": "Vouliwatch",
       "url": "https://api.vouliwatch.gr/v1",
       "status": "ok",
-      "updatedAt": "2026-11-26T12:28:19.310650+00:00",
+      "updatedAt": "2026-11-26T23:50:12.781194+00:00",
       "count": 100,
       "coverage": "Κατάλογος διαθέσιμων εγγραφών"
     },
     "control": {
       "name": "Vouliwatch",
       "url": "https://api.vouliwatch.gr/v1",
-      "status": "ok",
+      "status": "stale",
       "updatedAt": "2026-11-26T12:28:19.310650+00:00",
       "count": 80,
-      "coverage": "Κατάλογος διαθέσιμων εγγραφών"
+      "error": "https://api.vouliwatch.gr/v1/parliamentary-control/documents?page=1&per_page=20: HTTPError: HTTP Error 400: Bad Request"
     },
     "documents": {
       "name": "Διαφάνεια της Βουλής",
@@ -31616,7 +31616,7 @@
       "name": "Πρόγραμμα Διαύγεια",
       "url": "https://diavgeia.gov.gr/api/help",
       "status": "ok",
-      "updatedAt": "2026-11-26T12:28:19.310650+00:00",
+      "updatedAt": "2026-11-26T23:50:12.781194+00:00",
       "count": 2500,
       "coverage": "Κατάλογος διαθέσιμων εγγραφών"
     }
